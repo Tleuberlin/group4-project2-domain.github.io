@@ -1,18 +1,36 @@
+name: Deploy to GitHub Pages
+
+
+# Defines when the workflow will run
+on:
+  push:
+    branches: ['main']  # Trigger on pushes to main branch
+  workflow_dispatch:  
+
+
+env:
+  UV_SYSTEM_PYTHON: 1 
+  
 jobs:
     build:
         runs-on: ubuntu-latest
 
         steps:
             # ... checkout and install dependencies
+            - uses: actions/checkout@v5
+
+          # Install uv package manager for faster Python package installation
+            - name: 🚀 Install uv
+              uses: astral-sh/setup-uv@v7
 
             - name: 📄 Export notebook
               run: |
-                  marimo export html-wasm notebook.py -o path/to/output --mode run
+                  marimo export html-wasm notebook.py --mode run --sandbox
 
             - name: 📦 Upload Pages Artifact
               uses: actions/upload-pages-artifact@v3
               with:
-                  path: path/to/output
+                  path: /
 
     deploy:
         needs: build
